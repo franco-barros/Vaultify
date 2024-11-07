@@ -3,50 +3,60 @@ import react from "react";
 const SECURITY_CODE = "paradigma";
 
 function UseState({ name }) {
-  const [value, setValue] = react.useState("");
-  const [error, setError] = react.useState(false);
-  const [loading, setLoading] = react.useState(false);
-
-  console.log(value);
+  const [state, setState] = react.useState({
+    value: "",
+    error: false,
+    loading: false,
+  });
 
   react.useEffect(() => {
-    console.log("Empezando el efecto");
-    if (!!loading) {
+    if (state.loading) {
       setTimeout(() => {
-        console.log("Empezando la validacion");
-
-        if (value !== SECURITY_CODE) {
-          setError(true);
+        if (state.value !== SECURITY_CODE) {
+          setState({
+            ...state,
+            loading: false,
+            error: true,
+          });
+        } else {
+          setState({
+            ...state,
+            loading: false,
+            error: false,
+          });
+          alert("Código correcto"); // Acción si esta correcto el codigo
         }
-        setLoading(false);
-
-        console.log("Terminando la validacion");
       }, 3000);
     }
-
-    console.log("terminado el efecto");
-  }, [loading]);
+  }, [state.loading]);
 
   return (
     <div>
       <h2>Eliminar {name}</h2>
 
-      <p>Por favor, escribe el codigo de seguridad </p>
+      <p>Por favor, escribe el código de seguridad</p>
 
-      {error && !loading && <p>Error: el codigo es incorrecto</p>}
-      {loading && <p>Cargando ...</p>}
+      {state.error && !state.loading && <p>Error: el código es incorrecto</p>}
+      {state.loading && <p>Cargando ...</p>}
 
       <input
-        value={value}
-        placeholder="Codigo de seguridad "
+        value={state.value}
+        placeholder="Código de seguridad"
         onChange={(event) => {
-          setValue(event.target.value);
+          setState({
+            ...state,
+            value: event.target.value,
+            error: false,
+          });
         }}
       />
       <button
         onClick={() => {
-          setLoading(true);
-          // setError(false); UNA FORMA DE HACER LA VALIDACION
+          setState({
+            ...state,
+            loading: true,
+            error: false,
+          });
         }}
       >
         Comprobar
